@@ -52,42 +52,25 @@ avg_COP % PRINT IT
 
 % Usage of energy
 % Wnet_in = COP*Q_L
-energy_consumption = zeros(12, 1);
+energy_consumption = zeros(10, 1); % Save for the years now!
 
 for i=1:length(COP_tot)
-    month = temp.data(i, 2);
+    year = mod(temp.data(i, 1), 2007);
 %     disp(month)
     if COP_tot(i, 1) ~= 0
         % No energy consumption -> pass
-        energy_consumption(month, 1) = energy_consumption(month, 1) + tot_heat_leak(i,1)/COP_tot(i, 1);
+        energy_consumption(year, 1) = energy_consumption(year, 1) + tot_heat_leak(i,1)/COP_tot(i, 1);
     end
 end
 
-avg_energy_consumption = energy_consumption ./ days;
-avg_energy_consumption % PRINT IT
+% Convert from J to kWh
+kwh_energy_consumption = energy_consumption*2.778e-7 % PRINT IT
+% "normal energiförbrukning för en villa är ca 20.000 kWh/år"
 
-% t = months
-names = ["Jan" "Feb" "Mar" "Apr" "Maj" "Juni" "Juli" "Aug" "Sep" "Okt" "Nov" "Dec"];
-t = linspace(1, 12, 12);
-
-subplot(3, 1, 1)
-plot(t, avg_heat_leak)
-title('Husets värmeläckage som funktion av månader över 10 år');
+% Get the yearly energy consumption for each year and plot
+t = linspace(2008, 2017, 10);
+plot(t, kwh_energy_consumption)
+title('Årliga energiförbrukningen över 10 år');
 % Fundera över att ta bort 2e6 o bara skriva MJ
-ylabel('Värme [J]');
-set(gca,'xtick',[1:12],'xticklabel',names)
-xlabel('Månad');
-
-subplot(3, 1, 2)
-plot(t, avg_COP)
-title('Husets COP som funktion av månader över 10 år');
-ylabel('COP');
-set(gca,'xtick',[1:12],'xticklabel',names)
-xlabel('Månad');
-
-subplot(3, 1, 3)
-plot(t, avg_energy_consumption)
-title('Husets energiförbrukning som funktion av månader över 10 år');
-ylabel('Energiförbrukning [J]');
-set(gca,'xtick',[1:12],'xticklabel',names)
-xlabel('Månad');
+ylabel('Energiförbrukning [kWh]');
+xlabel('År');

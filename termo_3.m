@@ -25,7 +25,7 @@ for i=1:length(temp.data)
 end
 
 avg_heat_leak = heat_leak ./ days;
-avg_heat_leak % PRINT IT
+avg_heat_leak; % PRINT IT
 
 % COP = 1 - Q_L/Q_H. Or Q_H/(Q_H-Q_L)
 COP_tot = zeros(length(radiation.data), 1);
@@ -47,12 +47,13 @@ for i=1:length(radiation.data)
 end
 
 avg_COP = COP ./ days;
-avg_COP % PRINT IT
+avg_COP; % PRINT IT
 % COP_tot
 
 % Usage of energy
 % Wnet_in = COP*Q_L
 energy_consumption = zeros(12, 1);
+tot_energy_consumption = zeros(length(radiation.data), 1);
 
 for i=1:length(COP_tot)
     month = temp.data(i, 2);
@@ -60,34 +61,18 @@ for i=1:length(COP_tot)
     if COP_tot(i, 1) ~= 0
         % No energy consumption -> pass
         energy_consumption(month, 1) = energy_consumption(month, 1) + tot_heat_leak(i,1)/COP_tot(i, 1);
+        tot_energy_consumption(i, 1) = tot_heat_leak(i,1)/COP_tot(i, 1);
     end
 end
 
 avg_energy_consumption = energy_consumption ./ days;
-avg_energy_consumption % PRINT IT
+avg_energy_consumption; % PRINT IT
 
-% t = months
-names = ["Jan" "Feb" "Mar" "Apr" "Maj" "Juni" "Juli" "Aug" "Sep" "Okt" "Nov" "Dec"];
-t = linspace(1, 12, 12);
+E_sol = zeros(length(radiation.data), 1);
+for i=1:length(radiation.data)
+    E_sol(i, 1) = 0.07 * radiation.data(i, 4) * 100;
+end
 
-subplot(3, 1, 1)
-plot(t, avg_heat_leak)
-title('Husets värmeläckage som funktion av månader över 10 år');
-% Fundera över att ta bort 2e6 o bara skriva MJ
-ylabel('Värme [J]');
-set(gca,'xtick',[1:12],'xticklabel',names)
-xlabel('Månad');
-
-subplot(3, 1, 2)
-plot(t, avg_COP)
-title('Husets COP som funktion av månader över 10 år');
-ylabel('COP');
-set(gca,'xtick',[1:12],'xticklabel',names)
-xlabel('Månad');
-
-subplot(3, 1, 3)
-plot(t, avg_energy_consumption)
-title('Husets energiförbrukning som funktion av månader över 10 år');
-ylabel('Energiförbrukning [J]');
-set(gca,'xtick',[1:12],'xticklabel',names)
-xlabel('Månad');
+saved_energy = tot_energy_consumption - E_sol;
+t = linspace(1, length(tot_energy_consumption), length(tot_energy_consumption));
+plot(t, saved_energy);
