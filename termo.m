@@ -14,7 +14,7 @@ for i=1:length(temp.data)
     month = temp.data(i, 2);
     heat_loss = 0;
     if Tout < 21
-        % 24 because 2 is per hour
+        % 2e6*24 because 2e6 J is per hour and the temp. is per day
         heat_loss = 2e6*24*(21-Tout);
     end
     

@@ -25,7 +25,7 @@ for i=1:length(temp.data)
 end
 
 avg_heat_leak = heat_leak ./ days;
-avg_heat_leak % PRINT IT
+avg_heat_leak;
 
 % COP = 1 - Q_L/Q_H. Or Q_H/(Q_H-Q_L)
 COP_tot = zeros(length(radiation.data), 1);
@@ -47,11 +47,11 @@ for i=1:length(radiation.data)
 end
 
 avg_COP = COP ./ days;
-avg_COP % PRINT IT
+avg_COP;
 % COP_tot
 
 % Usage of energy
-% Wnet_in = COP*Q_L
+% Q_L/Wnet_in = COP
 energy_consumption = zeros(10, 1); % Save for the years now!
 
 for i=1:length(COP_tot)
@@ -74,3 +74,13 @@ title('Årliga energiförbrukningen över 10 år');
 % Fundera över att ta bort 2e6 o bara skriva MJ
 ylabel('Energiförbrukning [kWh]');
 xlabel('År');
+
+% Calculate the factor for how off the values are
+snitt = 0;
+for i=1:length(energy_consumption)
+    snitt = snitt + energy_consumption(i, 1)*2.778e-7;
+end
+
+typical_consumption = 25000;
+snitt = snitt / length(energy_consumption);
+typical_consumption/snitt
